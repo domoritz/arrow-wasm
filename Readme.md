@@ -1,3 +1,5 @@
 # WASM Arrow
 
-Ruin with `wasm-pack build --target nodejs && node example.js`.
+Work in progress and currently just a proof of concept. 
+
+Run with `wasm-pack build --target nodejs && node example.js`.

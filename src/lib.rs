@@ -15,8 +15,8 @@ extern "C" {
 pub fn parse(contents: &[u8]) -> usize {
     let cursor = Cursor::new(contents);
     let mut reader = ipc::reader::FileReader::try_new(cursor).unwrap();
-    
+
     assert!(reader.num_batches() == 1);
 
-    return reader.next().unwrap().unwrap().num_rows();
+    reader.next().unwrap().unwrap().num_rows()
 }

@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "apache-arrow": "^2.0.0",
+    "arquero": "^2.2.0",
+    "arquero-arrow": "^0.1.1"
+  }
+}

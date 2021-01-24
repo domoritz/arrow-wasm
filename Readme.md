@@ -13,3 +13,9 @@ To use a debug build, run `wasm-pack build --target nodejs --dev && node example
 ## Linting
 
 Run `cargo fmt && cargo clippy` before committing.
+
+## Check file size
+
+We can check how large the wasm file is after compression (which every web server probably does).
+
+`gzip -9 <pkg//arrow_wasm_bg.wasm | wc -c`

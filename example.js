@@ -10,7 +10,7 @@ const {
   Float64,
   Dictionary,
   Utf8,
-  RecordBatch
+  RecordBatch,
 } = require("apache-arrow");
 const { table } = require("arquero");
 const { dataFromTable } = require("arquero-arrow");
@@ -55,9 +55,9 @@ function ints(n, min, max, nullf) {
 const values = ints(1e7, -1000, 1000);
 // const values = ints(1e1, -1000, 1000);
 
-batch = lib.serialize_vector(values, true);
+// batch = lib.serialize_vector(values, true);
 
-console.log(batch)
+// console.log(batch)
 
 /*
 
@@ -118,4 +118,60 @@ function encode(values, type = new Int32(), nulls = true) {
   ]);
 }
 
-encode(values)
+// encode(values)
+
+function batch() {
+  const recordBatch = lib.RecordBatch.from(values);
+
+  console.log("numRows", recordBatch.numRows());
+  console.log("numColumns", recordBatch.numColumns());
+  console.log("serialize", recordBatch.serialize());
+  console.log("schema", recordBatch.schema());
+
+  console.log("nullCount", recordBatch.nullCount());
+
+  // wasm
+  const w0 = Date.now();
+  let wsum = 0;
+  for (let index = 0; index < recordBatch.numRows(); index++) {
+    wsum += recordBatch.value(index);
+  }
+  const wt = Date.now() - w0;
+
+  // wasm implemented
+  const wi0 = Date.now();
+  let wisum = recordBatch.sum();
+  const wit = Date.now() - wi0;
+
+  // arrow
+  const vectorArrow = Vector.from({
+    type: new Int32(),
+    values,
+    highWaterMark: 1e12,
+  });
+
+  const a0 = Date.now();
+  let asum = 0;
+  for (let index = 0; index < vectorArrow.length; index++) {
+    asum += vectorArrow.get(index);
+  }
+  const at = Date.now() - a0;
+
+  // native
+  const n0 = Date.now();
+  let nsum = 0;
+  for (let index = 0; index < values.length; index++) {
+    nsum += values[index];
+  }
+  const nt = Date.now() - n0;
+
+  console.table([
+    // eslint-disable-line
+    { method: "native", time: nt, sum: nsum },
+    { method: "arrow", time: at, sum: asum },
+    { method: "wasm", time: wt, sum: wsum },
+    { method: "wasm implemented", time: wit, sum: wisum },
+  ]);
+}
+
+batch();

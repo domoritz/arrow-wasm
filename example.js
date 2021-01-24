@@ -133,7 +133,8 @@ function batch() {
   // wasm
   const w0 = Date.now();
   let wsum = 0;
-  for (let index = 0; index < recordBatch.numRows(); index++) {
+  const rows = recordBatch.numRows();
+  for (let index = 0; index < rows; index++) {
     wsum += recordBatch.value(index);
   }
   const wt = Date.now() - w0;

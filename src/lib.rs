@@ -30,19 +30,19 @@ pub fn parse(contents: &[u8]) -> usize {
 }
 
 #[wasm_bindgen]
-pub fn serialize_vector(data: Vec<i32>, nullable: bool) -> Vec<u8> {
+pub fn serialize_vector(data: Vec<i32>, nullable: bool) -> Result<Vec<u8>, JsValue> {
     let array = Int32Array::from(data);
 
     let batch = RecordBatch::try_new(
         Arc::new(Schema::new(vec![Field::new("values", DataType::Int32, nullable)])),
         vec![Arc::new(array)]
-    ).unwrap();
+    ).expect("Could not create batch");
 
     let mut file = Vec::new();
     let writer = ipc::writer::FileWriter::try_new(&mut file, &batch.schema());
-    writer.unwrap().write(&batch).unwrap();
+    writer.unwrap().write(&batch).expect("Could not write batch");
 
-    file
+    Ok(file)
 }
 
 #[wasm_bindgen]

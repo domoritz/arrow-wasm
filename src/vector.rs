@@ -1,10 +1,11 @@
-use arrow::array::{Array, BooleanArray, PrimitiveArray};
+use arrow::array::{Array, BooleanArray, PrimitiveArray, ArrayRef};
 use arrow::datatypes::*;
 use arrow::util::bit_util;
 use wasm_bindgen::prelude::*;
+use arrow::compute::kernels;
 
-macro_rules! impl_basic_vector {
-    ($struct_name:ident; $N: ty) => {
+macro_rules! impl_vector {
+    ($struct_name:ident) => {
         impl_to_string!($struct_name);
 
         #[wasm_bindgen]
@@ -13,10 +14,6 @@ macro_rules! impl_basic_vector {
             #[wasm_bindgen(getter)]
             pub fn length(&self) -> usize {
                 self.0.len()
-            }
-
-            pub fn get(&self, index: usize) -> $N {
-                self.0.value(index)
             }
 
             #[wasm_bindgen(js_name = isValid)]
@@ -40,17 +37,27 @@ macro_rules! impl_basic_vector {
             }
         }
     };
+    ($struct_name:ident; $N: ty) => {
+        impl_vector!($struct_name);
+
+        #[wasm_bindgen]
+        impl $struct_name {
+            pub fn get(&self, index: usize) -> $N {
+                self.0.value(index)
+            }
+        }
+    };
 }
 
-macro_rules! declare_vector {
+macro_rules! number_vector {
     ($struct_name:ident; $T:ty) => {
-        declare_vector!($struct_name; PrimitiveArray<$T>; <$T as ArrowPrimitiveType>::Native);
+        number_vector!($struct_name; PrimitiveArray<$T>; <$T as ArrowPrimitiveType>::Native);
     };
     ($struct_name:ident; $A:ty; $N: ty) => {
         #[wasm_bindgen]
         pub struct $struct_name($A);
 
-        impl_basic_vector!($struct_name; $N);
+        impl_vector!($struct_name; $N);
 
         #[wasm_bindgen]
         #[allow(clippy::new_without_default)]
@@ -70,27 +77,43 @@ macro_rules! declare_vector {
             pub fn to_json(&self) -> JsValue {
                 JsValue::from_serde(&self.0.values()).unwrap()
             }
+
+            // aggregations
+            // TODO: think about how to support kernels
+
+            #[wasm_bindgen(catch)]
+            pub fn sum(&self) -> Option<$N>  {
+                kernels::aggregate::sum(&self.0)
+            }
+        }
+
+        impl $struct_name {
+            pub fn new(vector: $A) -> $struct_name {
+                $struct_name { 0: vector }
+            }
         }
     };
 }
 
-declare_vector!(Int8Vector; Int8Type);
-declare_vector!(Int16Vector; Int16Type);
-declare_vector!(Int32Vector; Int32Type);
-declare_vector!(Int64Vector; Int64Type);
-declare_vector!(UInt8Vector; UInt8Type);
-declare_vector!(UInt16Vector; UInt16Type);
-declare_vector!(UInt32Vector; UInt32Type);
-declare_vector!(UInt64Vector; UInt64Type);
-declare_vector!(Float32Vector; Float32Type);
-declare_vector!(Float64Vector; Float64Type);
+// Number vectors
 
-// Boolean arrays are a bit special
+number_vector!(Int8Vector; Int8Type);
+number_vector!(Int16Vector; Int16Type);
+number_vector!(Int32Vector; Int32Type);
+number_vector!(Int64Vector; Int64Type);
+number_vector!(UInt8Vector; UInt8Type);
+number_vector!(UInt16Vector; UInt16Type);
+number_vector!(UInt32Vector; UInt32Type);
+number_vector!(UInt64Vector; UInt64Type);
+number_vector!(Float32Vector; Float32Type);
+number_vector!(Float64Vector; Float64Type);
+
+// Boolean vector (because boolean arrays are special)
 
 #[wasm_bindgen]
 pub struct BooleanVector(BooleanArray);
 
-impl_basic_vector!(BooleanVector; bool);
+impl_vector!(BooleanVector; bool);
 
 #[wasm_bindgen]
 impl BooleanVector {
@@ -111,3 +134,25 @@ impl BooleanVector {
         JsValue::from_serde(&vector).unwrap()
     }
 }
+
+// Generic vector
+
+#[wasm_bindgen]
+pub struct Vector(ArrayRef);
+
+#[wasm_bindgen]
+impl Vector {
+    // pub fn asInt32Vector(&self) -> Result<Int32Vector, JsValue> {
+    //     let array = self.0.as_any().downcast_ref::<arrow::array::Int32Array>().expect("Failed to downcast");
+    //     Ok(Int32Vector::new(array.clone()))
+    // }
+}
+
+
+impl Vector {
+    pub fn new(vector: ArrayRef) -> Vector {
+        Vector { 0: vector }
+    }
+}
+
+impl_vector!(Vector);

@@ -13,6 +13,11 @@ impl Schema {
         crate::field::Field::new(self.0.field(i).clone())
     }
 
+    #[wasm_bindgen(js_name = indexOf)]
+    pub fn index_of(&self, name: &str) -> Result<usize, JsValue> {
+        Ok(self.0.index_of(name).expect("Could not find field"))
+    }
+
     #[wasm_bindgen(js_name = fieldWithName)]
     pub fn field_with_name(&self, name: &str) -> Result<crate::field::Field, JsValue> {
         let field = self.0.field_with_name(name).expect("Could not find field");

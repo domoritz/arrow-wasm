@@ -2,6 +2,7 @@
 mod utils;
 
 mod field;
+mod record_batch;
 mod schema;
 mod vector;
 
@@ -16,7 +17,7 @@ use wasm_bindgen::prelude::*;
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
 #[wasm_bindgen]
-pub fn test(contents: &[u8]) -> schema::Schema {
+pub fn test(contents: &[u8]) -> record_batch::RecordBatch {
     crate::utils::set_panic_hook();
 
     // let field = arrow::datatypes::Field::new("c1", arrow::datatypes::DataType::Int64, false);
@@ -28,5 +29,7 @@ pub fn test(contents: &[u8]) -> schema::Schema {
     let schema = reader.schema();
     let batch = reader.next().unwrap().unwrap();
 
-    schema::Schema::new(schema)
+    // schema::Schema::new(schema)
+
+    record_batch::RecordBatch::new(batch)
 }

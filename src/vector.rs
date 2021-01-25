@@ -10,37 +10,37 @@ macro_rules! impl_basic_vector {
         impl $struct_name {
             #[wasm_bindgen(getter)]
             pub fn length(&self) -> usize {
-                self.array.len()
+                self.0.len()
             }
 
             pub fn get(&self, index: usize) -> $N {
-                self.array.value(index)
+                self.0.value(index)
             }
 
             #[wasm_bindgen(js_name = isValid)]
             pub fn is_valid(&self, index: usize) -> bool {
-                self.array.is_valid(index)
+                self.0.is_valid(index)
             }
 
             #[wasm_bindgen(js_name = isNull)]
             pub fn is_null(&self, index: usize) -> bool {
-                self.array.is_null(index)
+                self.0.is_null(index)
             }
 
             #[wasm_bindgen(js_name = isEmpty)]
             pub fn is_empty(&self) -> bool {
-                self.array.is_empty()
+                self.0.is_empty()
             }
 
             #[wasm_bindgen(js_name = nullCount)]
             pub fn null_count(&self) -> usize {
-                self.array.null_count()
+                self.0.null_count()
             }
 
             #[wasm_bindgen(js_name = toString)]
             #[allow(clippy::inherent_to_string)]
             pub fn to_string(&self) -> String {
-                format!("{:?}", self.array)
+                format!("{:?}", self.0)
             }
         }
     };
@@ -52,9 +52,7 @@ macro_rules! declare_vector {
     };
     ($struct_name:ident; $A:ty; $N: ty) => {
         #[wasm_bindgen]
-        pub struct $struct_name {
-            array: $A,
-        }
+        pub struct $struct_name($A);
 
         impl_basic_vector!($struct_name; $N);
 
@@ -64,17 +62,17 @@ macro_rules! declare_vector {
             #[wasm_bindgen(catch)]
             pub fn from(data: Vec<$N>) -> Result<$struct_name, JsValue> {
                 let array = <$A>::from(data);
-                Ok(Self { array })
+                Ok(Self(array))
             }
 
             #[wasm_bindgen(js_name = toArray)]
             pub fn to_array(&self) -> Vec<$N> {
-                self.array.values().to_vec()
+                self.0.values().to_vec()
             }
 
             #[wasm_bindgen(js_name = toJSON)]
             pub fn to_json(&self) -> JsValue {
-                JsValue::from_serde(&self.array.values()).unwrap()
+                JsValue::from_serde(&self.0.values()).unwrap()
             }
         }
     };
@@ -94,9 +92,7 @@ declare_vector!(Float64Vector; Float64Type);
 // Boolean arrays are a bit special
 
 #[wasm_bindgen]
-pub struct BooleanVector {
-    array: BooleanArray,
-}
+pub struct BooleanVector(BooleanArray);
 
 impl_basic_vector!(BooleanVector; bool);
 
@@ -105,13 +101,12 @@ impl BooleanVector {
     #[wasm_bindgen(catch)]
     pub fn from(data: Vec<u8>, length: usize) -> Result<BooleanVector, JsValue> {
         let vector: Vec<bool> = (0..length).map(|i| bit_util::get_bit(&data, i)).collect();
-        let array = BooleanArray::from(vector);
-        Ok(Self { array })
+        Ok(Self(BooleanArray::from(vector)))
     }
 
     #[wasm_bindgen(js_name = toArray)]
     pub fn to_array(&self) -> Vec<u8> {
-        self.array.values().to_vec()
+        self.0.values().to_vec()
     }
 
     #[wasm_bindgen(js_name = toJSON)]

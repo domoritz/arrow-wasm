@@ -18,5 +18,5 @@ pub fn test() -> field::Field {
     crate::utils::set_panic_hook();
 
     let field = arrow::datatypes::Field::new("c1", arrow::datatypes::DataType::Int64, false);
-    field::Field::from(field)
+    field::Field::new(field)
 }

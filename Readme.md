@@ -1,4 +1,4 @@
-# WASM Arrow ![.github/workflows/test.yml](https://github.com/domoritz/arrow-wasm/workflows/.github/workflows/test.yml/badge.svg)
+# WASM Arrow ![.github/workflows/test.yml](https://github.com/domoritz/arrow-wasm/workflows/.github/workflows/test.yml/badge.svg) [![npm version](https://img.shields.io/npm/v/arrow-wasm.svg)](https://www.npmjs.com/package/arrow-wasm)
 
 The idea here is to compile the Rust library to wasm and use that instead of the JS library. The question is how difficult it is and what the performance implications are.
 

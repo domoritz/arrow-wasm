@@ -5,6 +5,8 @@ use wasm_bindgen::prelude::*;
 
 macro_rules! impl_basic_vector {
     ($struct_name:ident; $N: ty) => {
+        impl_to_string!($struct_name);
+
         #[wasm_bindgen]
         #[allow(clippy::new_without_default)]
         impl $struct_name {
@@ -35,12 +37,6 @@ macro_rules! impl_basic_vector {
             #[wasm_bindgen(js_name = nullCount)]
             pub fn null_count(&self) -> usize {
                 self.0.null_count()
-            }
-
-            #[wasm_bindgen(js_name = toString)]
-            #[allow(clippy::inherent_to_string)]
-            pub fn to_string(&self) -> String {
-                format!("{:?}", self.0)
             }
         }
     };

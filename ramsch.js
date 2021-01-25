@@ -1,3 +1,8 @@
 const arrow_wasm = require("./pkg");
+const fs = require("fs");
+const path = require("path");
 
-console.log(arrow_wasm.test().dictIsOrdered())
+const filePath = path.join(__dirname, "./flights-10k.arrow");
+const file = fs.readFileSync(filePath);
+
+console.log(arrow_wasm.test(file).toJSON());

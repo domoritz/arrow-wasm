@@ -4,6 +4,9 @@ use wasm_bindgen::prelude::*;
 #[wasm_bindgen]
 pub struct Field(datatypes::Field);
 
+impl_to_json!(Field);
+impl_to_string!(Field);
+
 #[wasm_bindgen]
 impl Field {
     pub fn name(&self) -> String {
@@ -28,9 +31,7 @@ impl Field {
     #[wasm_bindgen(js_name = dataType)]
     pub fn data_type(&self) -> JsValue {
         // TODO: return DataType type
-        let json = self.0.data_type().to_json();
-        let dtype = json.as_object().unwrap();
-        JsValue::from_serde(dtype).unwrap()
+        JsValue::from_serde(&self.0.data_type().to_json()).unwrap()
     }
 }
 

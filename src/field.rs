@@ -1,5 +1,5 @@
-use wasm_bindgen::prelude::*;
 use arrow::datatypes;
+use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 pub struct Field(datatypes::Field);
@@ -36,6 +36,6 @@ impl Field {
 
 impl Field {
     pub fn new(field: datatypes::Field) -> Field {
-        Field {0: field}
+        Field { 0: field }
     }
 }

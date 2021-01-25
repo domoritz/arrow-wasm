@@ -1,8 +1,8 @@
-use arrow::array::{Array, BooleanArray, PrimitiveArray, ArrayRef};
+use arrow::array::{Array, ArrayRef, BooleanArray, Float32Array, Int32Array, PrimitiveArray};
+use arrow::compute::kernels;
 use arrow::datatypes::*;
 use arrow::util::bit_util;
 use wasm_bindgen::prelude::*;
-use arrow::compute::kernels;
 
 macro_rules! impl_vector {
     ($struct_name:ident) => {
@@ -12,6 +12,7 @@ macro_rules! impl_vector {
         #[allow(clippy::new_without_default)]
         impl $struct_name {
             #[wasm_bindgen(getter)]
+            #[inline]
             pub fn length(&self) -> usize {
                 self.0.len()
             }
@@ -69,6 +70,7 @@ macro_rules! number_vector {
             }
 
             #[wasm_bindgen(js_name = toArray)]
+            #[inline]
             pub fn to_array(&self) -> Vec<$N> {
                 self.0.values().to_vec()
             }
@@ -142,12 +144,22 @@ pub struct Vector(ArrayRef);
 
 #[wasm_bindgen]
 impl Vector {
-    // pub fn asInt32Vector(&self) -> Result<Int32Vector, JsValue> {
-    //     let array = self.0.as_any().downcast_ref::<arrow::array::Int32Array>().expect("Failed to downcast");
-    //     Ok(Int32Vector::new(array.clone()))
-    // }
-}
+    pub fn as_i32_vector(&self) -> Result<Int32Vector, JsValue> {
+        // TODO: This feels wrong somehow. Should we keep a reference in the Vector structs instead (e.g. Rc or Arc)?
 
+        // let array = self
+        //     .0
+        //     .as_any()
+        //     .downcast_ref::<arrow::array::Int32Array>()
+        //     .expect("Failed to downcast");
+
+        Ok(Int32Vector::new(Int32Array::from(self.0.data())))
+    }
+
+    pub fn as_f32_vector(&self) -> Result<Float32Vector, JsValue> {
+        Ok(Float32Vector::new(Float32Array::from(self.0.data())))
+    }
+}
 
 impl Vector {
     pub fn new(vector: ArrayRef) -> Vector {

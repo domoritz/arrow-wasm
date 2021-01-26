@@ -29,9 +29,8 @@ impl Field {
     }
 
     #[wasm_bindgen(js_name = dataType)]
-    pub fn data_type(&self) -> JsValue {
-        // TODO: return DataType type
-        JsValue::from_serde(&self.0.data_type().to_json()).unwrap()
+    pub fn data_type(&self) -> crate::datatype::DataType {
+        crate::datatype::DataType::new(self.0.data_type().clone())
     }
 }
 

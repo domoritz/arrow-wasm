@@ -1,7 +1,8 @@
-use arrow::array::{Array, ArrayRef, BooleanArray, Float32Array, Int32Array, PrimitiveArray};
+use arrow::array::{Array, ArrayRef, BooleanArray, PrimitiveArray};
 use arrow::compute::kernels;
 use arrow::datatypes::*;
 use arrow::util::bit_util;
+use paste::paste;
 use wasm_bindgen::prelude::*;
 
 macro_rules! impl_vector {
@@ -11,27 +12,32 @@ macro_rules! impl_vector {
         #[wasm_bindgen]
         #[allow(clippy::new_without_default)]
         impl $struct_name {
+            /// Get the length of the vector.
             #[wasm_bindgen(getter)]
             #[inline]
             pub fn length(&self) -> usize {
                 self.0.len()
             }
 
+            /// Returns whether the element at `index` is not null.
             #[wasm_bindgen(js_name = isValid)]
             pub fn is_valid(&self, index: usize) -> bool {
                 self.0.is_valid(index)
             }
 
+            /// Returns whether the element at `index` is null.
             #[wasm_bindgen(js_name = isNull)]
             pub fn is_null(&self, index: usize) -> bool {
                 self.0.is_null(index)
             }
 
+            /// Returns whether this vector is empty.
             #[wasm_bindgen(js_name = isEmpty)]
             pub fn is_empty(&self) -> bool {
                 self.0.is_empty()
             }
 
+            /// Returns the total number of null values in this vector.
             #[wasm_bindgen(js_name = nullCount)]
             pub fn null_count(&self) -> usize {
                 self.0.null_count()
@@ -43,6 +49,7 @@ macro_rules! impl_vector {
 
         #[wasm_bindgen]
         impl $struct_name {
+            /// Returns the primitive value at `index`.
             pub fn get(&self, index: usize) -> $N {
                 self.0.value(index)
             }
@@ -69,12 +76,14 @@ macro_rules! number_vector {
                 Ok(Self(array))
             }
 
+            /// Returns the contents of the vector as a typed array.
             #[wasm_bindgen(js_name = toArray)]
             #[inline]
             pub fn to_array(&self) -> Vec<$N> {
                 self.0.values().to_vec()
             }
 
+            /// Returns the contents of the vector as a JSON array.
             #[wasm_bindgen(js_name = toJSON)]
             pub fn to_json(&self) -> JsValue {
                 JsValue::from_serde(&self.0.values()).unwrap()
@@ -94,8 +103,32 @@ macro_rules! number_vector {
                 $struct_name { 0: vector }
             }
         }
+
+        paste! {
+            #[wasm_bindgen]
+            impl Vector {
+                #[wasm_bindgen(js_name = as$struct_name)]
+                #[doc = "Cast Vector as a `" $struct_name "`."]
+                pub fn [<as$struct_name:snake>](&self) -> Result<$struct_name, JsValue> {
+                    Ok($struct_name::new(<$A>::from(self.0.data())))
+                }
+            }
+        }
     };
 }
+
+// Generic vector
+
+#[wasm_bindgen]
+pub struct Vector(ArrayRef);
+
+impl Vector {
+    pub fn new(vector: ArrayRef) -> Vector {
+        Vector { 0: vector }
+    }
+}
+
+impl_vector!(Vector);
 
 // Number vectors
 
@@ -125,11 +158,15 @@ impl BooleanVector {
         Ok(Self(BooleanArray::from(vector)))
     }
 
+    /// Returns a `Buffer` holding all the values of this array.
+    ///
+    /// Note this doesn't take the offset of this array into account.
     #[wasm_bindgen(js_name = toArray)]
     pub fn to_array(&self) -> Vec<u8> {
         self.0.values().to_vec()
     }
 
+    /// Returns the contents of the vector as a JSON array.
     #[wasm_bindgen(js_name = toJSON)]
     pub fn to_json(&self) -> JsValue {
         let vector: Vec<bool> = (0..self.length()).map(|i| self.get(i)).collect();
@@ -137,34 +174,17 @@ impl BooleanVector {
     }
 }
 
-// Generic vector
-
-#[wasm_bindgen]
-pub struct Vector(ArrayRef);
-
 #[wasm_bindgen]
 impl Vector {
-    pub fn as_i32_vector(&self) -> Result<Int32Vector, JsValue> {
-        // TODO: This feels wrong somehow. Should we keep a reference in the Vector structs instead (e.g. Rc or Arc)?
-
-        // let array = self
-        //     .0
-        //     .as_any()
-        //     .downcast_ref::<arrow::array::Int32Array>()
-        //     .expect("Failed to downcast");
-
-        Ok(Int32Vector::new(Int32Array::from(self.0.data())))
-    }
-
-    pub fn as_f32_vector(&self) -> Result<Float32Vector, JsValue> {
-        Ok(Float32Vector::new(Float32Array::from(self.0.data())))
+    /// Cast Vector as a `BooleanVector`.
+    #[wasm_bindgen(js_name = asBooleanVector)]
+    pub fn as_boolean_vector(&self) -> Result<BooleanVector, JsValue> {
+        Ok(BooleanVector::new(BooleanArray::from(self.0.data())))
     }
 }
 
-impl Vector {
-    pub fn new(vector: ArrayRef) -> Vector {
-        Vector { 0: vector }
+impl BooleanVector {
+    pub fn new(vector: BooleanArray) -> BooleanVector {
+        BooleanVector { 0: vector }
     }
 }
-
-impl_vector!(Vector);

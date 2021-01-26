@@ -1,6 +1,7 @@
 #[macro_use]
 mod utils;
 
+mod datatype;
 mod field;
 mod record_batch;
 mod schema;

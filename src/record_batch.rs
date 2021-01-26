@@ -16,12 +16,25 @@ impl RecordBatch {
         self.0.num_columns()
     }
 
+    /// Returns the schema of the record batches.
     pub fn schema(&self) -> crate::schema::Schema {
         crate::schema::Schema::new(self.0.schema())
     }
 
+    /// Get a column's vector by index.
     pub fn column(&self, index: usize) -> crate::vector::Vector {
         crate::vector::Vector::new(self.0.column(index).clone())
+    }
+
+    /// Get a column's vector by name.
+    #[wasm_bindgen(js_name = columnWithName)]
+    pub fn column_with_name(&self, name: &str) -> Result<crate::vector::Vector, JsValue> {
+        let index = self
+            .0
+            .schema()
+            .index_of(name)
+            .expect("Could not find field in schema");
+        Ok(self.column(index))
     }
 }
 

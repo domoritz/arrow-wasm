@@ -92,9 +92,16 @@ macro_rules! number_vector {
             // aggregations
             // TODO: think about how to support kernels
 
-            #[wasm_bindgen(catch)]
             pub fn sum(&self) -> Option<$N>  {
                 kernels::aggregate::sum(&self.0)
+            }
+
+            pub fn min(&self) -> Option<$N>  {
+                kernels::aggregate::min(&self.0)
+            }
+
+            pub fn max(&self) -> Option<$N>  {
+                kernels::aggregate::max(&self.0)
             }
         }
 

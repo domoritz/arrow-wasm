@@ -5,7 +5,12 @@ const path = require("path");
 const filePath = path.join(__dirname, "./flights-10k.arrow");
 const file = fs.readFileSync(filePath);
 
-const batch = arrow_wasm.test(file);
+const table = arrow_wasm.Table.from(file);
+
+console.log(table.numBatches());
+console.log(table.schema());
+
+const batch = table.recordBatch(0);
 
 console.log(batch.numRows());
 console.log(batch.numColumns());

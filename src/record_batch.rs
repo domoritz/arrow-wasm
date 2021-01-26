@@ -1,4 +1,3 @@
-use arrow::datatypes;
 use arrow::record_batch;
 use wasm_bindgen::prelude::*;
 

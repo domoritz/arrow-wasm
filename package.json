@@ -15,7 +15,10 @@
   ],
   "main": "dist/arrow.js",
   "scripts": {
-    "build": "rimraf dist && rollup --config",
+    "prebuild": "yarn clean",
+    "build": "rollup --config",
+    "watch": "rollup --config --watch",
+    "build:node": "wasm-pack build --target nodejs",
     "clean": "rimraf dist pkg",
     "prepublishOnly": "yarn build"
   },

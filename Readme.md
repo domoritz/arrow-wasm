@@ -1,8 +1,12 @@
 # WASM Arrow ![.github/workflows/test.yml](https://github.com/domoritz/arrow-wasm/workflows/.github/workflows/test.yml/badge.svg) [![npm version](https://img.shields.io/npm/v/arrow-wasm.svg)](https://www.npmjs.com/package/arrow-wasm)
 
-The idea here is to compile the Rust library to wasm and use that instead of the JS library. The question is how difficult it is and what the performance implications are.
+This package compiles the Rust library of [Apache Arrow](https://arrow.apache.org/) to WebAssembly. This might be a viable alternative to the [pure JavaScript library](https://arrow.apache.org/docs/js/).
 
-This repo is currently work in progress and just a proof of concept.
+This package is currently work in progress. You can see it in action at https://observablehq.com/@domoritz/apache-arrow-in-webassembly.
+
+## Documentation
+
+Coming later. The API is somewhat similar to the Rust version (https://docs.rs/arrow/3.0.0/arrow/) although there are some differences to make the API more familiar to JavaScript users.
 
 ## Building and testing
 
@@ -31,6 +35,6 @@ Run `cargo fmt && cargo clippy` before committing.
 
 ## Check file size
 
-We can check how large the wasm file is after compression (which every web server probably does).
+We can check how large the WASM file is after compression (which every web server probably does).
 
 `gzip -9 <pkg//arrow_wasm_bg.wasm | wc -c`

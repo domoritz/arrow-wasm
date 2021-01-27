@@ -22,12 +22,7 @@ Build with `wasm-pack build --target web`. Then run `python3 -m http.server` and
 
 ## Publishing
 
-```bash
-trash pkg
-wasm-pack build --target web
-wasm-pack pack
-wasm-pack publish
-```
+Run `npm publish` to build a bundle and release it to NPM.
 
 ## Linting
 

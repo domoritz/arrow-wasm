@@ -16,7 +16,8 @@
   "main": "dist/arrow.js",
   "scripts": {
     "build": "rimraf dist && rollup --config",
-    "clean": "rimraf dist pkg"
+    "clean": "rimraf dist pkg",
+    "prepublishOnly": "yarn build"
   },
   "devDependencies": {
     "@wasm-tool/rollup-plugin-rust": "^1.0.5",

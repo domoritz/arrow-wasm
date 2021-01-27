@@ -1,8 +1,8 @@
 # WASM Arrow ![.github/workflows/test.yml](https://github.com/domoritz/arrow-wasm/workflows/.github/workflows/test.yml/badge.svg) [![npm version](https://img.shields.io/npm/v/arrow-wasm.svg)](https://www.npmjs.com/package/arrow-wasm)
 
-This package compiles the Rust library of [Apache Arrow](https://arrow.apache.org/) to WebAssembly. This might be a viable alternative to the [pure JavaScript library](https://arrow.apache.org/docs/js/).
+This package compiles the Rust library of [Apache Arrow](https://arrow.apache.org/) to WebAssembly. This might be a viable alternative to the [pure JavaScript library](https://arrow.apache.org/docs/js/). Right now, this library is incomplete and the API will change so we recommend using JavaScript library.
 
-This package is currently work in progress. You can see it in action at https://observablehq.com/@domoritz/apache-arrow-in-webassembly.
+You can try this library in Observable at https://observablehq.com/@domoritz/apache-arrow-in-webassembly.
 
 ## Documentation
 

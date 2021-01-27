@@ -6,9 +6,24 @@ This repo is currently work in progress and just a proof of concept.
 
 ## Building and testing
 
+### Node
+
 Run with `wasm-pack build --target nodejs && node example.js`.
 
 To use a debug build, run `wasm-pack build --target nodejs --dev && node example.js`.
+
+### Browser
+
+Build with `wasm-pack build --target web`. Then run `python3 -m http.server` and open http://localhost:8000/.
+
+## Publishing
+
+```bash
+trash pkg
+wasm-pack build --target web
+wasm-pack pack
+wasm-pack publish
+```
 
 ## Linting
 

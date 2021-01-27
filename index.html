@@ -1,0 +1,26 @@
+<html>
+  <head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
+  </head>
+  <body>
+    <script type="module">
+      import init, * as arrow from "./pkg/arrow_wasm.js";
+
+      async function run() {
+        await init();
+
+        const url =
+          "https://gist.githubusercontent.com/domoritz/0f53a5abde95564c36dfaac623a7a922/raw/cce3719b853e25d5dfff97a270283ba83af3c0e6/flights-10k.arrow";
+
+        const response = await fetch(url);
+        const data = await response.arrayBuffer();
+        const contents = new Uint8Array(data);
+
+        const table = arrow.Table.from(contents);
+        console.log(table.schema().toJSON());
+      }
+
+      run();
+    </script>
+  </body>
+</html>

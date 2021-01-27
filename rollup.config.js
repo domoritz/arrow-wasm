@@ -7,12 +7,12 @@ export default {
         file: "dist/arrow.js",
         format: "umd",
         sourcemap: true,
-        name: "arrow",
-        inlineDynamicImports: true
+        name: "arrow"
     },
     plugins: [
         rust({
-            serverPath: "dist/",
+            // return empty path so that the wasm path is resolved automatically
+            importHook: function (_) { return undefined; },
         }),
     ],
 };

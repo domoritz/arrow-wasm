@@ -8,13 +8,13 @@ This repo is currently work in progress and just a proof of concept.
 
 ### Node
 
-Run with `wasm-pack build --target nodejs && node example.js`.
+Run with `wasm-pack build --target nodejs && node example/flights.js`.
 
-To use a debug build, run `wasm-pack build --target nodejs --dev && node example.js`.
+To use a debug build, run `wasm-pack build --target nodejs --dev && node example/flights.js`.
 
 ### Browser
 
-Build with `wasm-pack build --target web`. Then run `python3 -m http.server` and open http://localhost:8000/.
+Build with `wasm-pack build --target web`. Then run `python3 -m http.server` and open http://localhost:8000/examples/.
 
 ## Publishing
 

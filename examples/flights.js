@@ -1,4 +1,4 @@
-const arrow_wasm = require("./pkg");
+const arrow_wasm = require("../pkg/arrow_wasm");
 const fs = require("fs");
 const path = require("path");
 

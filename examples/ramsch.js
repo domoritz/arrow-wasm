@@ -1,4 +1,4 @@
-const arrow_wasm = require("./pkg");
+const arrow_wasm = require("../pkg/arrow_wasm");
 const arrow_js = require("apache-arrow");
 
 function rint(min, max) {
@@ -62,10 +62,10 @@ vectors.push(arrow_wasm.Int16Vector.from([1,2,3]));
 vectors.push(arrow_wasm.Int32Vector.from([1,2,3]));
 vectors.push(arrow_wasm.Int64Vector.from([1,2,3].map(BigInt)));
 
-vectors.push(arrow_wasm.UInt8Vector.from([1,2,3]));
-vectors.push(arrow_wasm.UInt16Vector.from([1,2,3]));
-vectors.push(arrow_wasm.UInt32Vector.from([1,2,3]));
-vectors.push(arrow_wasm.UInt64Vector.from([1,2,3].map(BigInt)));
+vectors.push(arrow_wasm.Uint8Vector.from([1,2,3]));
+vectors.push(arrow_wasm.Uint16Vector.from([1,2,3]));
+vectors.push(arrow_wasm.Uint32Vector.from([1,2,3]));
+vectors.push(arrow_wasm.Uint64Vector.from([1,2,3].map(BigInt)));
 
 vectors.push(arrow_wasm.Float32Vector.from([1.1,2.2,3.3]));
 vectors.push(arrow_wasm.Float64Vector.from([1.1,2.2,3.3]));

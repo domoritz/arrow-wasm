@@ -33,13 +33,10 @@ impl Table {
 
     pub fn from(contents: &[u8]) -> Result<Table, JsValue> {
         let cursor = Cursor::new(contents);
-        let mut reader =
-            arrow::ipc::reader::FileReader::try_new(cursor).expect("Could not read ipc");
+        let reader = arrow::ipc::reader::FileReader::try_new(cursor).expect("Could not read ipc");
 
         let schema = reader.schema();
-        let record_batches = (0..reader.num_batches())
-            .map(|_| reader.next().unwrap().unwrap())
-            .collect();
+        let record_batches = reader.map(|batch| batch.unwrap()).collect();
 
         Ok(Table {
             schema,

@@ -12,7 +12,6 @@ export default {
     },
     plugins: [
         rust({
-            nodejs: true,
             serverPath: "dist/",
         }),
     ],

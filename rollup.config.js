@@ -6,7 +6,7 @@ export default {
     output: {
         file: "dist/arrow.js",
         format: "umd",
-        sourcemap: true,
+        sourcemap: false,
         name: "arrow"
     },
     plugins: [

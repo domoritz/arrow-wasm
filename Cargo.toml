@@ -1,6 +1,6 @@
 [package]
 name = "arrow-wasm"
-version = "0.0.8"
+version = "0.0.9"
 authors = ["Dominik Moritz <domoritz@gmail.com>"]
 license = "MIT/Apache-2.0"
 edition = "2018"

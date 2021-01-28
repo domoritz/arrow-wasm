@@ -7,16 +7,19 @@ pub struct RecordBatch(record_batch::RecordBatch);
 #[wasm_bindgen]
 impl RecordBatch {
     #[wasm_bindgen(js_name = numRows)]
+    #[wasm_bindgen(getter)]
     pub fn num_rows(&self) -> usize {
         self.0.num_rows()
     }
 
     #[wasm_bindgen(js_name = numColumns)]
+    #[wasm_bindgen(getter)]
     pub fn num_columns(&self) -> usize {
         self.0.num_columns()
     }
 
     /// Returns the schema of the record batches.
+    #[wasm_bindgen(getter)]
     pub fn schema(&self) -> crate::schema::Schema {
         crate::schema::Schema::new(self.0.schema())
     }

@@ -13,6 +13,7 @@ impl Schema {
         crate::field::Field::new(self.0.field(i).clone())
     }
 
+    #[wasm_bindgen(getter)]
     pub fn fields(&self) -> JsValue {
         JsValue::from_serde(&self.0.fields()).unwrap()
     }
@@ -36,6 +37,7 @@ impl Schema {
         Ok(crate::field::Field::new(field.clone()))
     }
 
+    #[wasm_bindgen(getter)]
     pub fn metadata(&self) -> JsValue {
         JsValue::from_serde(&self.0.metadata()).unwrap()
     }

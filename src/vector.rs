@@ -32,13 +32,13 @@ macro_rules! impl_vector {
             }
 
             /// Returns whether this vector is empty.
-            #[wasm_bindgen(js_name = isEmpty)]
+            #[wasm_bindgen(getter, js_name = isEmpty)]
             pub fn is_empty(&self) -> bool {
                 self.0.is_empty()
             }
 
             /// Returns the total number of null values in this vector.
-            #[wasm_bindgen(js_name = nullCount)]
+            #[wasm_bindgen(getter, js_name = nullCount)]
             pub fn null_count(&self) -> usize {
                 self.0.null_count()
             }

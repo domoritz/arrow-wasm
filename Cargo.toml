@@ -18,7 +18,7 @@ default = ["console_error_panic_hook"]
 
 # disabling wasm opt on apple silicon
 [package.metadata.wasm-pack.profile.release]
-wasm-opt = true
+wasm-opt = false
 
 [dependencies]
 arrow = "3.0"

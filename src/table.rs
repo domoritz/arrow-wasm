@@ -14,6 +14,7 @@ pub struct Table {
 #[wasm_bindgen]
 impl Table {
     /// Returns the schema of the record batches.
+    #[wasm_bindgen(getter)]
     pub fn schema(&self) -> crate::schema::Schema {
         crate::schema::Schema::new(self.schema.clone())
     }
@@ -26,7 +27,7 @@ impl Table {
     }
 
     /// Return the number of batches in the file
-    #[wasm_bindgen(js_name = numBatches)]
+    #[wasm_bindgen(getter, js_name = numBatches)]
     pub fn num_batches(&self) -> usize {
         self.record_batches.len()
     }

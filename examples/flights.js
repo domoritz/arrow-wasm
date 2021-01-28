@@ -7,17 +7,17 @@ const file = fs.readFileSync(filePath);
 
 const table = arrow_wasm.Table.from(file);
 
-console.log(table.numBatches());
-console.log(table.schema());
+console.log(table.numBatches);
+console.log(table.schema);
 
 const batch = table.recordBatch(0);
 
-console.log(batch.numRows());
-console.log(batch.numColumns());
-console.log(batch.schema().toJSON());
-console.log(batch.schema().fields());
-console.log(batch.schema().field(0).dataType().toJSON())
-console.log(batch.schema().columnWithName("DEP_DELAY"));
+console.log(batch.numRows);
+console.log(batch.numColumns);
+console.log(batch.schema.toJSON());
+console.log(batch.schema.fields);
+console.log(batch.schema.field(0).dataType.toJSON())
+console.log(batch.schema.columnWithName("DEP_DELAY"));
 console.log(batch.column(3).toString());
 console.log(batch.column(3).asFloat32Vector().toArray());
 

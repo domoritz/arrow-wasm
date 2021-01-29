@@ -1,16 +1,17 @@
-use arrow::datatypes;
+use crate::field;
+use crate::{impl_to_json, impl_to_string};
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
-pub struct Schema(datatypes::SchemaRef);
+pub struct Schema(arrow::datatypes::SchemaRef);
 
 impl_to_json!(Schema);
 impl_to_string!(Schema);
 
 #[wasm_bindgen]
 impl Schema {
-    pub fn field(&self, i: usize) -> crate::field::Field {
-        crate::field::Field::new(self.0.field(i).clone())
+    pub fn field(&self, i: usize) -> field::Field {
+        field::Field::new(self.0.field(i).clone())
     }
 
     #[wasm_bindgen(getter)]
@@ -25,21 +26,28 @@ impl Schema {
 
     /// Look up a column by name and return a immutable reference to the column along with its index.
     #[wasm_bindgen(js_name = columnWithName)]
-    pub fn column_with_name(&self, name: &str) -> Result<JsValue, JsValue> {
-        let column = self.0.column_with_name(name).expect("Could not find field");
-        Ok(JsValue::from_serde(&column).unwrap())
+    pub fn column_with_name(&self, name: &str) -> JsValue {
+        match self.0.column_with_name(name) {
+            Some(column) => JsValue::from_serde(&column).unwrap(),
+            None => wasm_bindgen::JsValue::undefined(),
+        }
     }
 
     /// Find the index of the column with the given name.
     #[wasm_bindgen(js_name = indexOf)]
     pub fn index_of(&self, name: &str) -> Result<usize, JsValue> {
-        Ok(self.0.index_of(name).expect("Could not find field"))
+        match self.0.index_of(name) {
+            Ok(index) => Ok(index),
+            Err(error) => Err(format!("{}", error).into()),
+        }
     }
 
     #[wasm_bindgen(js_name = fieldWithName)]
-    pub fn field_with_name(&self, name: &str) -> Result<crate::field::Field, JsValue> {
-        let field = self.0.field_with_name(name).expect("Could not find field");
-        Ok(crate::field::Field::new(field.clone()))
+    pub fn field_with_name(&self, name: &str) -> Result<field::Field, JsValue> {
+        match self.0.field_with_name(name) {
+            Ok(field) => Ok(field::Field::new(field.clone())),
+            Err(error) => Err(format!("{}", error).into()),
+        }
     }
 
     #[wasm_bindgen(getter)]
@@ -49,7 +57,7 @@ impl Schema {
 }
 
 impl Schema {
-    pub fn new(schema: datatypes::SchemaRef) -> Schema {
+    pub fn new(schema: arrow::datatypes::SchemaRef) -> Schema {
         Schema { 0: schema }
     }
 }

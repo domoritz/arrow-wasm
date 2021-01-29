@@ -1,11 +1,9 @@
-#[macro_use]
-mod utils;
-
 mod datatype;
 mod field;
 mod record_batch;
 mod schema;
 mod table;
+mod utils;
 mod vector;
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global

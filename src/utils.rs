@@ -10,6 +10,7 @@ pub fn set_panic_hook() {
     console_error_panic_hook::set_once();
 }
 
+#[macro_export]
 macro_rules! impl_to_json {
     ($struct_name:ident) => {
         #[wasm_bindgen]
@@ -22,6 +23,7 @@ macro_rules! impl_to_json {
     };
 }
 
+#[macro_export]
 macro_rules! impl_to_string {
     ($struct_name:ident) => {
         #[wasm_bindgen]

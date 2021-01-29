@@ -16,7 +16,7 @@ console.log(batch.numRows);
 console.log(batch.numColumns);
 console.log(batch.schema.toJSON());
 console.log(batch.schema.fields);
-console.log(batch.schema.field(0).dataType.toJSON())
+console.log(batch.schema.field(0).dataType.toJSON());
 console.log(batch.schema.columnWithName("DEP_DELAY"));
 console.log(batch.column(3).toString());
 console.log(batch.column(3).asFloat32Vector().toArray());

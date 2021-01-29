@@ -1,8 +1,9 @@
-use arrow::datatypes;
+use crate::datatype;
+use crate::{impl_to_json, impl_to_string};
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
-pub struct Field(datatypes::Field);
+pub struct Field(arrow::datatypes::Field);
 
 impl_to_json!(Field);
 impl_to_string!(Field);
@@ -29,14 +30,14 @@ impl Field {
         self.0.dict_is_ordered()
     }
 
-    #[wasm_bindgen(getter ,js_name = dataType)]
-    pub fn data_type(&self) -> crate::datatype::DataType {
-        crate::datatype::DataType::new(self.0.data_type().clone())
+    #[wasm_bindgen(getter, js_name = dataType)]
+    pub fn data_type(&self) -> datatype::DataType {
+        datatype::DataType::new(self.0.data_type().clone())
     }
 }
 
 impl Field {
-    pub fn new(field: datatypes::Field) -> Field {
+    pub fn new(field: arrow::datatypes::Field) -> Field {
         Field { 0: field }
     }
 }

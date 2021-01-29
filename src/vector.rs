@@ -1,3 +1,4 @@
+use crate::impl_to_string;
 use arrow::array::{Array, ArrayRef, BooleanArray, PrimitiveArray};
 use arrow::compute::kernels;
 use arrow::datatypes::*;
@@ -70,10 +71,8 @@ macro_rules! number_vector {
         #[wasm_bindgen]
         #[allow(clippy::new_without_default)]
         impl $struct_name {
-            #[wasm_bindgen(catch)]
-            pub fn from(data: Vec<$N>) -> Result<$struct_name, JsValue> {
-                let array = <$A>::from(data);
-                Ok(Self(array))
+            pub fn from(data: Vec<$N>) -> $struct_name {
+                Self(<$A>::from(data))
             }
 
             /// Returns the contents of the vector as a typed array.
@@ -116,8 +115,8 @@ macro_rules! number_vector {
             impl Vector {
                 #[wasm_bindgen(js_name = as$struct_name)]
                 #[doc = "Cast Vector as a `" $struct_name "`."]
-                pub fn [<as$struct_name:snake>](&self) -> Result<$struct_name, JsValue> {
-                    Ok($struct_name::new(<$A>::from(self.0.data())))
+                pub fn [<as$struct_name:snake>](&self) -> $struct_name {
+                    $struct_name::new(<$A>::from(self.0.data()))
                 }
             }
         }
@@ -183,10 +182,9 @@ impl_vector!(BooleanVector; bool);
 
 #[wasm_bindgen]
 impl BooleanVector {
-    #[wasm_bindgen(catch)]
-    pub fn from(data: Vec<u8>, length: usize) -> Result<BooleanVector, JsValue> {
+    pub fn from(data: Vec<u8>, length: usize) -> BooleanVector {
         let vector: Vec<bool> = (0..length).map(|i| bit_util::get_bit(&data, i)).collect();
-        Ok(Self(BooleanArray::from(vector)))
+        Self(BooleanArray::from(vector))
     }
 
     /// Returns a `Buffer` holding all the values of this array.
@@ -215,8 +213,8 @@ impl BooleanVector {
 impl Vector {
     /// Cast Vector as a `BooleanVector`.
     #[wasm_bindgen(js_name = asBooleanVector)]
-    pub fn as_boolean_vector(&self) -> Result<BooleanVector, JsValue> {
-        Ok(BooleanVector::new(BooleanArray::from(self.0.data())))
+    pub fn as_boolean_vector(&self) -> BooleanVector {
+        BooleanVector::new(BooleanArray::from(self.0.data()))
     }
 }
 

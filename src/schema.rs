@@ -18,6 +18,11 @@ impl Schema {
         JsValue::from_serde(&self.0.fields()).unwrap()
     }
 
+    #[wasm_bindgen(getter, js_name = numFields)]
+    pub fn num_fields(&self) -> usize {
+        self.0.fields().len()
+    }
+
     /// Look up a column by name and return a immutable reference to the column along with its index.
     #[wasm_bindgen(js_name = columnWithName)]
     pub fn column_with_name(&self, name: &str) -> Result<JsValue, JsValue> {

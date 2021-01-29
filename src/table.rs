@@ -1,7 +1,5 @@
 use arrow::ipc;
 use arrow::{datatypes, error::ArrowError};
-use std::io::Cursor;
-
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -33,18 +31,13 @@ impl Table {
     }
 
     pub fn from(contents: &[u8]) -> Result<Table, JsValue> {
-        let cursor = Cursor::new(contents);
-
-        let reader = match arrow::ipc::reader::FileReader::try_new(cursor) {
+        let reader = match arrow::ipc::reader::StreamReader::try_new(contents) {
             Ok(reader) => reader,
             Err(error) => return Err(format!("{}", error).into()),
         };
 
         let schema = reader.schema();
-        let record_batches: Result<Vec<arrow::record_batch::RecordBatch>, ArrowError> =
-            reader.map(|batch| batch).collect();
-
-        match record_batches {
+        match reader.collect() {
             Ok(record_batches) => Ok(Table {
                 schema,
                 record_batches,
@@ -55,22 +48,22 @@ impl Table {
 
     pub fn serialize(&self) -> Result<Vec<u8>, JsValue> {
         let mut file = Vec::new();
-        let mut writer = ipc::writer::FileWriter::try_new(&mut file, &self.schema).unwrap();
+        {
+            let mut writer = ipc::writer::StreamWriter::try_new(&mut file, &self.schema).unwrap();
 
-        let result: Result<Vec<()>, ArrowError> = self
-            .record_batches
-            .iter()
-            .map(|batch| writer.write(batch))
-            .collect();
-        if let Err(error) = result {
-            return Err(format!("{}", error).into());
-        }
+            let result: Result<Vec<()>, ArrowError> = self
+                .record_batches
+                .iter()
+                .map(|batch| writer.write(batch))
+                .collect();
+            if let Err(error) = result {
+                return Err(format!("{}", error).into());
+            }
 
-        if let Err(error) = writer.finish() {
-            return Err(format!("{}", error).into());
-        }
-
-        drop(writer);
+            if let Err(error) = writer.finish() {
+                return Err(format!("{}", error).into());
+            }
+        };
 
         Ok(file)
     }

@@ -79,6 +79,7 @@ macro_rules! number_vector {
             #[wasm_bindgen(js_name = toArray)]
             #[inline]
             pub fn to_array(&self) -> Vec<$N> {
+                // TODO: try to avoid this copy by writing into js_sys?
                 self.0.values().to_vec()
             }
 
@@ -104,19 +105,13 @@ macro_rules! number_vector {
             }
         }
 
-        impl $struct_name {
-            pub fn new(vector: $A) -> $struct_name {
-                $struct_name { 0: vector }
-            }
-        }
-
         paste! {
             #[wasm_bindgen]
             impl Vector {
                 #[wasm_bindgen(js_name = as$struct_name)]
                 #[doc = "Cast Vector as a `" $struct_name "`."]
                 pub fn [<as$struct_name:snake>](&self) -> $struct_name {
-                    $struct_name::new(<$A>::from(self.0.data()))
+                    $struct_name(<$A>::from(self.0.data()))
                 }
             }
         }
@@ -182,7 +177,7 @@ impl_vector!(BooleanVector; bool);
 
 #[wasm_bindgen]
 impl BooleanVector {
-    pub fn from(data: Vec<u8>, length: usize) -> BooleanVector {
+    pub fn from(data: &[u8], length: usize) -> BooleanVector {
         let vector: Vec<bool> = (0..length).map(|i| bit_util::get_bit(&data, i)).collect();
         Self(BooleanArray::from(vector))
     }
@@ -204,7 +199,7 @@ impl BooleanVector {
     /// Returns the contents of the vector as a JSON array.
     #[wasm_bindgen(js_name = toJSON)]
     pub fn to_json(&self) -> JsValue {
-        let vector: Vec<bool> = (0..self.length()).map(|i| self.get(i)).collect();
+        let vector: Vec<Option<bool>> = self.0.iter().collect();
         JsValue::from_serde(&vector).unwrap()
     }
 }
@@ -214,12 +209,6 @@ impl Vector {
     /// Cast Vector as a `BooleanVector`.
     #[wasm_bindgen(js_name = asBooleanVector)]
     pub fn as_boolean_vector(&self) -> BooleanVector {
-        BooleanVector::new(BooleanArray::from(self.0.data()))
-    }
-}
-
-impl BooleanVector {
-    pub fn new(vector: BooleanArray) -> BooleanVector {
-        BooleanVector { 0: vector }
+        BooleanVector(BooleanArray::from(self.0.data()))
     }
 }

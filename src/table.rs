@@ -31,7 +31,8 @@ impl Table {
     }
 
     pub fn from(contents: &[u8]) -> Result<Table, JsValue> {
-        let reader = match arrow::ipc::reader::StreamReader::try_new(contents) {
+        let cursor = std::io::Cursor::new(contents);
+        let reader = match arrow::ipc::reader::FileReader::try_new(cursor) {
             Ok(reader) => reader,
             Err(error) => return Err(format!("{}", error).into()),
         };

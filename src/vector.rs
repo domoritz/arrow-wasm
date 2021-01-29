@@ -58,10 +58,7 @@ macro_rules! impl_vector {
     };
 }
 
-macro_rules! number_vector {
-    ($struct_name:ident; $T:ty) => {
-        number_vector!($struct_name; PrimitiveArray<$T>; <$T as ArrowPrimitiveType>::Native);
-    };
+macro_rules! number_vector_base {
     ($struct_name:ident; $A:ty; $N: ty) => {
         #[wasm_bindgen]
         pub struct $struct_name($A);
@@ -73,14 +70,6 @@ macro_rules! number_vector {
         impl $struct_name {
             pub fn from(data: Vec<$N>) -> $struct_name {
                 Self(<$A>::from(data))
-            }
-
-            /// Returns the contents of the vector as a typed array.
-            #[wasm_bindgen(js_name = toArray)]
-            #[inline]
-            pub fn to_array(&self) -> Vec<$N> {
-                // TODO: try to avoid this copy by writing into js_sys?
-                self.0.values().to_vec()
             }
 
             /// Returns the contents of the vector as a JSON array.
@@ -118,16 +107,37 @@ macro_rules! number_vector {
     };
 }
 
-macro_rules! number_vector_view {
+macro_rules! number_vector {
     ($struct_name:ident; $T:ty) => {
+        number_vector_base!($struct_name; PrimitiveArray<$T>; <$T as ArrowPrimitiveType>::Native);
+
+        #[wasm_bindgen]
+        impl $struct_name {
+            /// Returns the contents of the vector as a typed array.
+            #[wasm_bindgen(js_name = toArray)]
+            #[inline]
+            pub fn to_array(&self) -> Vec<<$T as ArrowPrimitiveType>::Native> {
+                self.0.values().to_vec()
+            }
+        }
+    };
+    ($struct_name:ident; $T:ty; $J: ty) => {
+        number_vector_base!($struct_name; PrimitiveArray<$T>; <$T as ArrowPrimitiveType>::Native);
+
         /// Creates a JS typed array which is a view into wasm's linear memory at the slice specified.
         /// This function returns a new typed array which is a view into wasm's memory.
         /// This view does not copy the underlying data.
         #[wasm_bindgen]
-        #[allow(clippy::new_without_default)]
         impl $struct_name {
-            pub fn view(&self) -> $T {
-                unsafe { <$T>::view(self.0.values()) }
+            /// Returns the contents of the vector as a typed array.
+            #[wasm_bindgen(js_name = toArray)]
+            #[inline]
+            pub fn to_array(&self) -> $J {
+                <$J>::from(self.0.values())
+            }
+
+            pub fn view(&self) -> $J {
+                unsafe { <$J>::view(self.0.values()) }
             }
         }
     };
@@ -148,25 +158,16 @@ impl_vector!(Vector);
 
 // Number vectors
 
-number_vector!(Int8Vector; Int8Type);
-number_vector!(Int16Vector; Int16Type);
-number_vector!(Int32Vector; Int32Type);
+number_vector!(Int8Vector; Int8Type; js_sys::Int8Array);
+number_vector!(Int16Vector; Int16Type; js_sys::Int16Array);
+number_vector!(Int32Vector; Int32Type; js_sys::Int32Array);
 number_vector!(Int64Vector; Int64Type);
-number_vector!(Uint8Vector; UInt8Type);
-number_vector!(Uint16Vector; UInt16Type);
-number_vector!(Uint32Vector; UInt32Type);
+number_vector!(Uint8Vector; UInt8Type; js_sys::Uint8Array);
+number_vector!(Uint16Vector; UInt16Type; js_sys::Uint16Array);
+number_vector!(Uint32Vector; UInt32Type; js_sys::Uint32Array);
 number_vector!(Uint64Vector; UInt64Type);
-number_vector!(Float32Vector; Float32Type);
-number_vector!(Float64Vector; Float64Type);
-
-number_vector_view!(Int8Vector; js_sys::Int8Array);
-number_vector_view!(Int16Vector; js_sys::Int16Array);
-number_vector_view!(Int32Vector; js_sys::Int32Array);
-number_vector_view!(Uint8Vector; js_sys::Uint8Array);
-number_vector_view!(Uint16Vector; js_sys::Uint16Array);
-number_vector_view!(Uint32Vector; js_sys::Uint32Array);
-number_vector_view!(Float32Vector; js_sys::Float32Array);
-number_vector_view!(Float64Vector; js_sys::Float64Array);
+number_vector!(Float32Vector; Float32Type; js_sys::Float32Array);
+number_vector!(Float64Vector; Float64Type; js_sys::Float64Array);
 
 // Boolean vector (because boolean arrays are special)
 

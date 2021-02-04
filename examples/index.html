@@ -17,7 +17,7 @@
         const contents = new Uint8Array(data);
 
         const table = arrow.Table.from(contents);
-        console.log(table.schema().toJSON());
+        console.log(table.schema.toJSON());
       }
 
       run();

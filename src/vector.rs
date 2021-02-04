@@ -180,7 +180,7 @@ number_vector!(Uint64Vector; UInt64Type);
 number_vector!(Float32Vector; Float32Type; js_sys::Float32Array);
 number_vector!(Float64Vector; Float64Type; js_sys::Float64Array);
 
-// Boolean vector (because boolean arrays are special)
+// Boolean vector
 
 #[wasm_bindgen]
 pub struct BooleanVector(BooleanArray);

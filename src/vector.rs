@@ -4,6 +4,7 @@ use arrow::compute::kernels;
 use arrow::datatypes::*;
 use arrow::util::bit_util;
 use paste::paste;
+use std::sync::Arc;
 use wasm_bindgen::prelude::*;
 
 macro_rules! impl_vector {
@@ -45,7 +46,7 @@ macro_rules! impl_vector {
             }
         }
     };
-    ($struct_name:ident; $N: ty) => {
+    ($struct_name:ident; $A: ty; $N: ty) => {
         impl_vector!($struct_name);
 
         #[wasm_bindgen]
@@ -53,6 +54,17 @@ macro_rules! impl_vector {
             /// Returns the primitive value at `index`.
             pub fn get(&self, index: usize) -> $N {
                 self.0.value(index)
+            }
+
+            /// Returns a zero-copy slice of this array with the indicated offset and length.
+            pub fn slice(&self, offset: usize, length: usize) -> Self {
+                Self(<$A>::from(Arc::new(self.0.data().slice(offset, length))))
+            }
+
+            /// Returns the array, taking only the number of elements specified.
+            pub fn limit(&self, num_elements: usize) -> Self {
+                let lim = num_elements.min(self.0.len());
+                self.slice(0, lim)
             }
         }
     };
@@ -63,7 +75,7 @@ macro_rules! number_vector_base {
         #[wasm_bindgen]
         pub struct $struct_name($A);
 
-        impl_vector!($struct_name; $N);
+        impl_vector!($struct_name; $A; $N);
 
         #[wasm_bindgen]
         #[allow(clippy::new_without_default)]
@@ -78,8 +90,7 @@ macro_rules! number_vector_base {
                 JsValue::from_serde(&self.0.values()).unwrap()
             }
 
-            // aggregations
-            // TODO: think about how to support kernels
+            // Aggregations
 
             pub fn sum(&self) -> Option<$N>  {
                 kernels::aggregate::sum(&self.0)
@@ -174,7 +185,7 @@ number_vector!(Float64Vector; Float64Type; js_sys::Float64Array);
 #[wasm_bindgen]
 pub struct BooleanVector(BooleanArray);
 
-impl_vector!(BooleanVector; bool);
+impl_vector!(BooleanVector; BooleanArray; bool);
 
 #[wasm_bindgen]
 impl BooleanVector {

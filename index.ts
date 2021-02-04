@@ -1,3 +1,3 @@
-import init from "./Cargo.toml";
+import init, * as arrow from "./pkg/arrow_wasm";
 
-export default init;
+export default Object.assign(init, arrow);

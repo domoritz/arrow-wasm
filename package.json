@@ -15,8 +15,12 @@
   ],
   "main": "dist/arrow.js",
   "scripts": {
-    "prebuild": "yarn clean",
+    "prebuild": "yarn clean && yarn build:cargo && yarn build:wasm-bindgen",
     "build": "rollup --config",
+    "build:cargo": "cargo build --release --target wasm32-unknown-unknown",
+    "build:wasm-bindgen": "wasm-bindgen target/wasm32-unknown-unknown/release/arrow_wasm.wasm --target web --reference-types --out-dir pkg",
+    "build:wasm-opt": "wasm-opt pkg/arrow_wasm_bg.wasm -O -g --output pkg/arrow_wasm_bg.opt.wasm && mv pkg/arrow_wasm_bg.opt.wasm pkg/arrow_wasm_bg.wasm || yarn build:wasm-opt-note",
+    "build:wasm-opt-note": "echo 'NOTE: Since wasm-opt could not be found (or it failed), the resulting module might not perform that well, but it should still work.'",
     "watch": "rollup --config --watch",
     "build:web": "wasm-pack build --target web",
     "build:node": "wasm-pack build --target nodejs",
@@ -32,6 +36,7 @@
     "light-server": "^2.9.1",
     "rimraf": "^3.0.2",
     "rollup": "^2.38.5",
+    "rollup-plugin-copy": "^3.3.0",
     "typescript": "^4.1.3"
   },
   "sideEffects": false

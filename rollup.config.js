@@ -1,5 +1,5 @@
 import typescript from "@rollup/plugin-typescript";
-import rust from "@wasm-tool/rollup-plugin-rust";
+import copy from "rollup-plugin-copy";
 
 export default {
   input: "index.ts",
@@ -10,8 +10,8 @@ export default {
     name: "arrow",
   },
   plugins: [
-    rust({
-      inlineWasm: true,
+    copy({
+      targets: [{ src: "pkg/arrow_wasm_bg.wasm", dest: "dist/" }],
     }),
     typescript(),
   ],

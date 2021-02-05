@@ -36,10 +36,9 @@ impl Schema {
     /// Find the index of the column with the given name.
     #[wasm_bindgen(js_name = indexOf)]
     pub fn index_of(&self, name: &str) -> Result<usize, JsValue> {
-        match self.0.index_of(name) {
-            Ok(index) => Ok(index),
-            Err(error) => Err(format!("{}", error).into()),
-        }
+        self.0
+            .index_of(name)
+            .map_err(|error| format!("{}", error).into())
     }
 
     #[wasm_bindgen(js_name = fieldWithName)]

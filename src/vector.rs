@@ -1,5 +1,5 @@
 use crate::impl_to_string;
-use arrow::array::{Array, ArrayRef, BooleanArray, PrimitiveArray};
+use arrow::array::{Array, ArrayRef, BooleanArray, PrimitiveArray, StringArray};
 use arrow::compute::kernels;
 use arrow::datatypes::*;
 use arrow::util::bit_util;
@@ -222,5 +222,52 @@ impl Vector {
     #[wasm_bindgen(js_name = asBooleanVector)]
     pub fn as_boolean_vector(&self) -> BooleanVector {
         BooleanVector(BooleanArray::from(self.0.data()))
+    }
+}
+
+/// String vector
+
+#[wasm_bindgen]
+pub struct StringVector(StringArray);
+
+impl_vector!(StringVector);
+
+#[wasm_bindgen]
+impl StringVector {
+    // TODO: implement from
+
+    /// Returns the primitive value at `index`.
+    pub fn get(&self, index: usize) -> String {
+        self.0.value(index).into()
+    }
+
+    /// Returns a zero-copy slice of this array with the indicated offset and length.
+    pub fn slice(&self, offset: usize, length: usize) -> Self {
+        Self(StringArray::from(Arc::new(
+            self.0.data().slice(offset, length),
+        )))
+    }
+
+    /// Returns the array, taking only the number of elements specified.
+    pub fn limit(&self, num_elements: usize) -> Self {
+        let lim = num_elements.min(self.0.len());
+        self.slice(0, lim)
+    }
+
+    /// Returns the contents of the vector as a JSON array.
+    #[wasm_bindgen(js_name = toJSON)]
+    pub fn to_json(&self) -> JsValue {
+        let vector: Vec<Option<&str>> = self.0.iter().collect();
+        // seems to be faster than to_value
+        JsValue::from_serde(&vector).unwrap()
+    }
+}
+
+#[wasm_bindgen]
+impl Vector {
+    /// Cast Vector as a `StringVector`.
+    #[wasm_bindgen(js_name = asStringVector)]
+    pub fn as_string_vector(&self) -> StringVector {
+        StringVector(StringArray::from(self.0.data()))
     }
 }

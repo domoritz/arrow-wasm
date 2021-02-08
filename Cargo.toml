@@ -22,7 +22,7 @@ wasm-opt = false
 
 [dependencies]
 arrow = { git = "https://github.com/apache/arrow" }
-wasm-bindgen = { version = "0.2", features = ["serde-serialize"] }
+wasm-bindgen = { version = "0.2.71", features = ["serde-serialize"] }
 paste = "1.0"
 js-sys = "*"
 

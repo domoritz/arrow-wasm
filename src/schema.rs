@@ -49,17 +49,22 @@ impl Schema {
         }
     }
 
+    /// Returns custom metadata key-value pairs.
     #[wasm_bindgen(getter)]
     pub fn metadata(&self) -> JsValue {
         JsValue::from_serde(&self.0.metadata()).unwrap()
     }
 
-    pub fn from(json: &JsValue) -> Schema {
+    /// Parse a `Schema` definition from a JSON representation.
+    pub fn from(json: &JsValue) -> Result<Schema, JsValue> {
         let value = json.into_serde().unwrap();
-        let schema = arrow::datatypes::Schema::from(&value).unwrap();
-        Schema {
+        let schema = match arrow::datatypes::Schema::from(&value) {
+            Ok(schema) => schema,
+            Err(error) => return Err(format!("{}", error).into()),
+        };
+        Ok(Schema {
             0: std::sync::Arc::new(schema),
-        }
+        })
     }
 }
 

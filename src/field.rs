@@ -34,6 +34,16 @@ impl Field {
     pub fn data_type(&self) -> datatype::DataType {
         datatype::DataType::new(self.0.data_type().clone())
     }
+
+    /// Parse a `Field` definition from a JSON representation.
+    pub fn from(json: &JsValue) -> Result<Field, JsValue> {
+        let value = json.into_serde().unwrap();
+        let field = match arrow::datatypes::Field::from(&value) {
+            Ok(field) => field,
+            Err(error) => return Err(format!("{}", error).into()),
+        };
+        Ok(Field { 0: field })
+    }
 }
 
 impl Field {

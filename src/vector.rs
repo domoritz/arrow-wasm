@@ -12,7 +12,6 @@ macro_rules! impl_vector {
         impl_to_string!($struct_name);
 
         #[wasm_bindgen]
-        #[allow(clippy::new_without_default)]
         impl $struct_name {
             /// Get the length of the vector.
             #[wasm_bindgen(getter)]
@@ -78,7 +77,6 @@ macro_rules! number_vector_base {
         impl_vector!($struct_name; $A; $N);
 
         #[wasm_bindgen]
-        #[allow(clippy::new_without_default)]
         impl $struct_name {
             pub fn from(data: Vec<$N>) -> $struct_name {
                 Self(<$A>::from(data))

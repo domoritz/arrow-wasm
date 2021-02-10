@@ -1,4 +1,5 @@
 use crate::{schema, vector};
+use js_sys::Array;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -25,6 +26,20 @@ impl RecordBatch {
     /// Get a column's vector by index.
     pub fn column(&self, index: usize) -> vector::Vector {
         vector::Vector::new(self.0.column(index).clone())
+    }
+
+    /// Get all columns in the record batch.
+    // TODO: specify that the output type is Array<Vector>, not Array<any>
+    #[wasm_bindgen(getter)]
+    pub fn columns(&self) -> Array {
+        let vectors: Vec<vector::Vector> = self
+            .0
+            .columns()
+            .into_iter()
+            .map(|column| vector::Vector::new(column.clone()))
+            .collect();
+
+        vectors.into_iter().map(JsValue::from).collect()
     }
 
     /// Get a column's vector by name.

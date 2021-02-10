@@ -13,6 +13,7 @@ console.log(table.schema);
 const batch = table.recordBatch(0);
 
 console.log(batch.numRows);
+console.log(batch.columns[3]);
 console.log(batch.numColumns);
 console.log(batch.schema.toJSON());
 console.log(batch.schema.fields);

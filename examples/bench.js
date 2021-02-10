@@ -43,11 +43,11 @@ function sum() {
   for (let index = 0; index < repeats; index++) console.log(vec.sum());
   console.timeEnd("sum wasm kernel");
 
-  console.time("sum native js (toNativeArray)");
-  const narr = vec.toNativeArray();
+  console.time("sum native js (toJSON)");
+  const narr = vec.toJSON();
   for (let index = 0; index < repeats; index++)
     console.log(narr.reduce((a, b) => a + b, 0));
-  console.timeEnd("sum native js (toNativeArray)");
+  console.timeEnd("sum native js (toJSON)");
 
   console.time("sum native js (toArray)");
   const arr = vec.toArray();

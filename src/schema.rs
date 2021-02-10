@@ -53,6 +53,14 @@ impl Schema {
     pub fn metadata(&self) -> JsValue {
         JsValue::from_serde(&self.0.metadata()).unwrap()
     }
+
+    pub fn from(json: &JsValue) -> Schema {
+        let value = json.into_serde().unwrap();
+        let schema = arrow::datatypes::Schema::from(&value).unwrap();
+        Schema {
+            0: std::sync::Arc::new(schema),
+        }
+    }
 }
 
 impl Schema {

@@ -1,3 +1,5 @@
+use std::io::Cursor;
+
 use arrow::ipc;
 use arrow::{datatypes, error::ArrowError};
 use wasm_bindgen::prelude::*;
@@ -28,6 +30,25 @@ impl Table {
     #[wasm_bindgen(getter, js_name = numBatches)]
     pub fn num_batches(&self) -> usize {
         self.record_batches.len()
+    }
+
+    #[wasm_bindgen(js_name = fromUint8Array)]
+    pub fn from_uint8_array(contents: js_sys::Uint8Array) -> Result<Table, JsValue> {
+        let vec = contents.to_vec();
+        let cursor: Cursor<&[u8]> = std::io::Cursor::new(vec.as_slice());
+        let reader = match arrow::ipc::reader::FileReader::try_new(cursor) {
+            Ok(reader) => reader,
+            Err(error) => return Err(format!("{}", error).into()),
+        };
+
+        let schema = reader.schema();
+        match reader.collect() {
+            Ok(record_batches) => Ok(Table {
+                schema,
+                record_batches,
+            }),
+            Err(error) => Err(format!("{}", error).into()),
+        }
     }
 
     pub fn from(contents: &[u8]) -> Result<Table, JsValue> {

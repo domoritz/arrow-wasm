@@ -14,7 +14,7 @@ Coming later. The API is somewhat similar to the Rust version (https://docs.rs/a
 
 Run with `wasm-pack build --target nodejs && node example/flights.js`.
 
-To use a debug build, run `wasm-pack build --target nodejs --dev && node example/flights.js`.
+To use a debug build, run `wasm-pack build --target nodejs --dev && node examples/flights.js`.
 
 ### Browser
 

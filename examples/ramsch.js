@@ -99,4 +99,8 @@ console.group("==== JS ====");
 run(vector_js);
 console.groupEnd();
 
-console.log(arrow_wasm.Int32Vector.from([1, 2, 3]).toRaw());
+const raw = arrow_wasm.Int32Vector.from([1, 2, 3]).toRaw();
+console.log(raw);
+console.log(
+  arrow_wasm.Vector.fromRaw(raw.array, raw.schema).asInt32Vector().length
+);

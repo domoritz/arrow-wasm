@@ -1,11 +1,20 @@
 use crate::impl_to_string;
-use arrow::array::{Array, ArrayRef, BooleanArray, PrimitiveArray, StringArray};
 use arrow::compute::kernels;
 use arrow::datatypes::*;
 use arrow::util::bit_util;
+use arrow::{
+    array::{Array, ArrayRef, BooleanArray, PrimitiveArray, StringArray},
+    ffi::{FFI_ArrowArray, FFI_ArrowSchema},
+};
 use paste::paste;
 use std::sync::Arc;
 use wasm_bindgen::prelude::*;
+
+#[wasm_bindgen]
+pub struct ArrowVectorFFI {
+    pub array: *const FFI_ArrowArray,
+    pub schema: *const FFI_ArrowSchema,
+}
 
 macro_rules! impl_vector {
     ($struct_name:ident) => {
@@ -42,6 +51,18 @@ macro_rules! impl_vector {
             #[wasm_bindgen(getter, js_name = nullCount)]
             pub fn null_count(&self) -> usize {
                 self.0.null_count()
+            }
+
+            /// Returns two pointers that represent this vector in the C Data Interface (FFI).
+            #[wasm_bindgen(js_name = toRaw)]
+            pub fn to_raw(&self) -> Result<ArrowVectorFFI, JsValue> {
+                match self.0.to_raw() {
+                    Ok(raw) => Ok(ArrowVectorFFI {
+                        array: raw.0,
+                        schema: raw.1,
+                    }),
+                    Err(error) => Err(format!("{}", error).into()),
+                }
             }
         }
     };
@@ -160,6 +181,21 @@ pub struct Vector(ArrayRef);
 impl Vector {
     pub fn new(vector: ArrayRef) -> Vector {
         Vector { 0: vector }
+    }
+}
+
+#[wasm_bindgen]
+impl Vector {
+    /// Make a vector from binary in the C Data Interface (FFI).
+    #[wasm_bindgen(js_name = fromRaw)]
+    pub fn from_raw(
+        array: *const FFI_ArrowArray,
+        schema: *const FFI_ArrowSchema,
+    ) -> Result<Vector, JsValue> {
+        match unsafe { arrow::array::make_array_from_raw(array, schema) } {
+            Ok(array) => Ok(Vector { 0: array }),
+            Err(error) => Err(format!("{}", error).into()),
+        }
     }
 }
 

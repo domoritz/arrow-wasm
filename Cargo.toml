@@ -16,7 +16,6 @@ crate-type = ["cdylib", "rlib"]
 [features]
 default = ["console_error_panic_hook"]
 
-# disabling wasm opt on apple silicon
 [package.metadata.wasm-pack.profile.release]
 wasm-opt = true
 

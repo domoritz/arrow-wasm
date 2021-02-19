@@ -7,6 +7,12 @@ use paste::paste;
 use std::sync::Arc;
 use wasm_bindgen::prelude::*;
 
+#[wasm_bindgen]
+pub struct ArrowVectorFFI {
+    pub array: *const arrow::ffi::FFI_ArrowArray,
+    pub schema: *const arrow::ffi::FFI_ArrowSchema,
+}
+
 macro_rules! impl_vector {
     ($struct_name:ident) => {
         impl_to_string!($struct_name);
@@ -42,6 +48,18 @@ macro_rules! impl_vector {
             #[wasm_bindgen(getter, js_name = nullCount)]
             pub fn null_count(&self) -> usize {
                 self.0.null_count()
+            }
+
+            /// Returns two pointers that represent this array in the C Data Interface (FFI).
+            #[wasm_bindgen(js_name = toRaw)]
+            pub fn to_raw(&self) -> Result<ArrowVectorFFI, JsValue> {
+                match self.0.to_raw() {
+                    Ok(raw) => Ok(ArrowVectorFFI {
+                        array: raw.0,
+                        schema: raw.1,
+                    }),
+                    Err(error) => Err(format!("{}", error).into()),
+                }
             }
         }
     };

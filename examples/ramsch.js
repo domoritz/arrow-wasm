@@ -56,19 +56,19 @@ function run(a) {
 
 // try different types
 
-const vectors = []
-vectors.push(arrow_wasm.Int8Vector.from([1,2,3]));
-vectors.push(arrow_wasm.Int16Vector.from([1,2,3]));
-vectors.push(arrow_wasm.Int32Vector.from([1,2,3]));
-vectors.push(arrow_wasm.Int64Vector.from([1,2,3].map(BigInt)));
+const vectors = [];
+vectors.push(arrow_wasm.Int8Vector.from([1, 2, 3]));
+vectors.push(arrow_wasm.Int16Vector.from([1, 2, 3]));
+vectors.push(arrow_wasm.Int32Vector.from([1, 2, 3]));
+vectors.push(arrow_wasm.Int64Vector.from([1, 2, 3].map(BigInt)));
 
-vectors.push(arrow_wasm.Uint8Vector.from([1,2,3]));
-vectors.push(arrow_wasm.Uint16Vector.from([1,2,3]));
-vectors.push(arrow_wasm.Uint32Vector.from([1,2,3]));
-vectors.push(arrow_wasm.Uint64Vector.from([1,2,3].map(BigInt)));
+vectors.push(arrow_wasm.Uint8Vector.from([1, 2, 3]));
+vectors.push(arrow_wasm.Uint16Vector.from([1, 2, 3]));
+vectors.push(arrow_wasm.Uint32Vector.from([1, 2, 3]));
+vectors.push(arrow_wasm.Uint64Vector.from([1, 2, 3].map(BigInt)));
 
-vectors.push(arrow_wasm.Float32Vector.from([1.1,2.2,3.3]));
-vectors.push(arrow_wasm.Float64Vector.from([1.1,2.2,3.3]));
+vectors.push(arrow_wasm.Float32Vector.from([1.1, 2.2, 3.3]));
+vectors.push(arrow_wasm.Float64Vector.from([1.1, 2.2, 3.3]));
 
 vectors.push(arrow_wasm.BooleanVector.from([5], 4));
 
@@ -99,3 +99,4 @@ console.group("==== JS ====");
 run(vector_js);
 console.groupEnd();
 
+console.log(arrow_wasm.Int32Vector.from([1, 2, 3]).toRaw());

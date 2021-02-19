@@ -30,6 +30,7 @@ impl Table {
         self.record_batches.len()
     }
 
+    /// Create a table from IPC bytes. Use `fromWasmUint8Array` to avoid memory copies.
     pub fn from(contents: &[u8]) -> Result<Table, JsValue> {
         let cursor = std::io::Cursor::new(contents);
         let reader = match arrow::ipc::reader::FileReader::try_new(cursor) {
@@ -45,6 +46,12 @@ impl Table {
             }),
             Err(error) => Err(format!("{}", error).into()),
         }
+    }
+
+    /// Create a table from a pre-initialized buffer. The memory is passed without a copy.
+    #[wasm_bindgen(js_name = fromWasmUint8Array)]
+    pub fn from_wasm(data: &WasmUint8Array) -> Result<Table, JsValue> {
+        Table::from(&data.0)
     }
 
     pub fn serialize(&self) -> Result<Vec<u8>, JsValue> {
@@ -67,5 +74,22 @@ impl Table {
         };
 
         Ok(file)
+    }
+}
+
+#[wasm_bindgen]
+pub struct WasmUint8Array(Vec<u8>);
+
+#[wasm_bindgen]
+impl WasmUint8Array {
+    #[wasm_bindgen(constructor)]
+    pub fn new(size: usize) -> Self {
+        let buffer = vec![0; size];
+        Self { 0: buffer }
+    }
+
+    #[wasm_bindgen(getter)]
+    pub fn view(&mut self) -> js_sys::Uint8Array {
+        unsafe { js_sys::Uint8Array::view_mut_raw(self.0.as_mut_ptr(), self.0.len()) }
     }
 }

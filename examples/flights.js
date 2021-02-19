@@ -5,7 +5,22 @@ const path = require("path");
 const filePath = path.join(__dirname, "./flights-1m.arrow");
 const file = fs.readFileSync(filePath);
 
-const table = arrow_wasm.Table.from(file);
+const wasmArray = new arrow_wasm.WasmUint8Array(file.length);
+file.copy(wasmArray.view);
+
+for (let i = 0; i < 10; i++) {
+  console.time("from");
+  const table = arrow_wasm.Table.from(file);
+  console.timeEnd("from");
+}
+
+for (let i = 0; i < 10; i++) {
+  console.time("fromBuffer");
+  const table = arrow_wasm.Table.fromWasmUint8Array(wasmArray);
+  console.timeEnd("fromBuffer");
+}
+
+/*
 
 console.log(table.numBatches);
 console.log(table.schema);
@@ -49,3 +64,4 @@ function sum() {
 }
 
 sum();
+*/

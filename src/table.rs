@@ -54,7 +54,7 @@ impl Table {
         Table::from(&data.0)
     }
 
-    pub fn serialize(&self) -> Result<Vec<u8>, JsValue> {
+    pub fn serialize(&self) -> Result<js_sys::Uint8Array, JsValue> {
         let mut file = Vec::new();
         {
             let mut writer = ipc::writer::StreamWriter::try_new(&mut file, &self.schema).unwrap();
@@ -73,7 +73,7 @@ impl Table {
             }
         };
 
-        Ok(file)
+        Ok(unsafe { js_sys::Uint8Array::view(&file) })
     }
 }
 

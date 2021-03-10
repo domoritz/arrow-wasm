@@ -43,7 +43,7 @@ version = "0.3"
 features = ["console"]
 
 [dev-dependencies]
-wasm-bindgen-test = "0.3.13"
+wasm-bindgen-test = "0.3"
 
 [profile.release]
 codegen-units = 1

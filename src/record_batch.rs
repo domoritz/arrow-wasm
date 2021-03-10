@@ -35,7 +35,7 @@ impl RecordBatch {
         let vectors: Vec<vector::Vector> = self
             .0
             .columns()
-            .into_iter()
+            .iter()
             .map(|column| vector::Vector::new(column.clone()))
             .collect();
 

@@ -9,10 +9,5 @@ export default {
     sourcemap: true,
     name: "arrow",
   },
-  plugins: [
-    rust({
-      inlineWasm: true,
-    }),
-    typescript(),
-  ],
+  plugins: [rust(), typescript()],
 };

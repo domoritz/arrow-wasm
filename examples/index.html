@@ -9,8 +9,7 @@
       async function run() {
         await init();
 
-        const url =
-          "https://gist.github.com/domoritz/e2bb9f8d366832f4934cd0c687792b52/raw/5dadf203f654c2051a05626577a839ed874f30eb/flights-1m.arrow";
+        const url = "flights-1m.arrow";
 
         const response = await fetch(url);
         const data = await response.arrayBuffer();

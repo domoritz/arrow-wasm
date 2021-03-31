@@ -7,7 +7,6 @@ use arrow::{
     ffi::{FFI_ArrowArray, FFI_ArrowSchema},
 };
 use paste::paste;
-use std::sync::Arc;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -78,7 +77,7 @@ macro_rules! impl_vector {
 
             /// Returns a zero-copy slice of this array with the indicated offset and length.
             pub fn slice(&self, offset: usize, length: usize) -> Self {
-                Self(<$A>::from(Arc::new(self.0.data().slice(offset, length))))
+                Self(<$A>::from(self.0.data().slice(offset, length)))
             }
 
             /// Returns the array, taking only the number of elements specified.
@@ -130,7 +129,7 @@ macro_rules! number_vector_base {
                 #[wasm_bindgen(js_name = as$struct_name)]
                 #[doc = "Cast Vector as a `" $struct_name "`."]
                 pub fn [<as$struct_name:snake>](&self) -> $struct_name {
-                    $struct_name(<$A>::from(self.0.data()))
+                    $struct_name(<$A>::from(self.0.data().clone()))
                 }
             }
         }
@@ -255,7 +254,7 @@ impl Vector {
     /// Cast Vector as a `BooleanVector`.
     #[wasm_bindgen(js_name = asBooleanVector)]
     pub fn as_boolean_vector(&self) -> BooleanVector {
-        BooleanVector(BooleanArray::from(self.0.data()))
+        BooleanVector(BooleanArray::from(self.0.data().clone()))
     }
 }
 
@@ -277,9 +276,7 @@ impl StringVector {
 
     /// Returns a zero-copy slice of this array with the indicated offset and length.
     pub fn slice(&self, offset: usize, length: usize) -> Self {
-        Self(StringArray::from(Arc::new(
-            self.0.data().slice(offset, length),
-        )))
+        Self(StringArray::from(self.0.data().slice(offset, length)))
     }
 
     /// Returns the array, taking only the number of elements specified.
@@ -302,6 +299,6 @@ impl Vector {
     /// Cast Vector as a `StringVector`.
     #[wasm_bindgen(js_name = asStringVector)]
     pub fn as_string_vector(&self) -> StringVector {
-        StringVector(StringArray::from(self.0.data()))
+        StringVector(StringArray::from(self.0.data().clone()))
     }
 }

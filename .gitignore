@@ -1,5 +1,4 @@
 /target
-Cargo.lock
 dist
 node_modules
 vscode-profile*

@@ -41,7 +41,7 @@ dependencies = [
 
 [[package]]
 name = "arrow-wasm"
-version = "0.0.18"
+version = "0.0.20"
 dependencies = [
  "arrow",
  "console_error_panic_hook",

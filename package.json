@@ -23,12 +23,14 @@
     "clean": "rimraf dist pkg",
     "prepublishOnly": "yarn build",
     "preserve": "yarn build:web",
-    "serve": "light-server -s ."
+    "serve": "light-server -s .",
+    "perf": "wasm-pack build --target nodejs && node perf.js"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^8.2.1",
     "@wasm-tool/rollup-plugin-rust": "^1.0.6",
     "apache-arrow": "^4.0.0",
+    "benny": "^3.6.15",
     "light-server": "^2.9.1",
     "rimraf": "^3.0.2",
     "rollup": "^2.45.2",

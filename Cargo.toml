@@ -20,7 +20,7 @@ default = ["console_error_panic_hook"]
 wasm-opt = true
 
 [dependencies]
-arrow = { git = "https://github.com/apache/arrow" }
+arrow = { git = "https://github.com/apache/arrow-rs" }
 wasm-bindgen = { version = "0.2", features = ["serde-serialize"] }
 paste = "1.0"
 js-sys = "*"

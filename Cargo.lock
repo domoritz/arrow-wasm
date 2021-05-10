@@ -20,7 +20,7 @@ checksum = "23b62fc65de8e4e7f52534fb52b0f3ed04746ae267519eef2a83941e8085068b"
 [[package]]
 name = "arrow"
 version = "4.0.0-SNAPSHOT"
-source = "git+https://github.com/apache/arrow-rs#4dfbca6e5791be400d2fd3ae863655445327650e"
+source = "git+https://github.com/apache/arrow-rs#8bd769bc118f617580cfaa7b1e654159c0fb696b"
 dependencies = [
  "cfg_aliases",
  "chrono",

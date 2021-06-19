@@ -16,8 +16,6 @@ Run with `wasm-pack build --target nodejs && node examples/flights.js`.
 
 To use a debug build, run `wasm-pack build --target nodejs --dev && node examples/flights.js`.
 
-To run the performance benchmark, run `wasm-pack build --target nodejs && node perf.js`.
-
 ### Browser
 
 Build with `wasm-pack build --target web`. Then run `python3 -m http.server` and open http://localhost:8000/examples/.

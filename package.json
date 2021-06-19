@@ -29,12 +29,12 @@
   "devDependencies": {
     "@rollup/plugin-typescript": "^8.2.1",
     "@wasm-tool/rollup-plugin-rust": "^1.0.6",
-    "apache-arrow": "^4.0.0",
+    "apache-arrow": "^4.0.1",
     "benny": "^3.6.15",
     "light-server": "^2.9.1",
     "rimraf": "^3.0.2",
-    "rollup": "^2.50.0",
-    "typescript": "^4.2.4"
+    "rollup": "^2.52.1",
+    "typescript": "^4.3.4"
   },
   "sideEffects": false
 }

@@ -20,7 +20,7 @@ default = ["console_error_panic_hook"]
 wasm-opt = true
 
 [dependencies]
-arrow = { version = "4.4.0" }
+arrow = { version = "5.0.0" }
 wasm-bindgen = { version = "0.2", features = ["serde-serialize"] }
 paste = "1.0"
 js-sys = "*"

@@ -1,4 +1,5 @@
 name: Auto-merge Dependabot PRs
+
 on:
   schedule:
     - cron: '0 * * * *'
